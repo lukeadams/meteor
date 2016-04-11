@@ -6,19 +6,20 @@ set -u
 # When upgrading node versions, also update the values of MIN_NODE_VERSION at
 # the top of tools/main.js and tools/server/boot.js, and the text in
 # docs/client/full-api/concepts.html and the README in tools/bundler.js.
-NODE_VERSION=0.10.43
+NODE_VERSION=5.10.1
 
 source "$(dirname $0)/build-dev-bundle-common.sh"
 echo CHECKOUT DIR IS "$CHECKOUT_DIR"
 echo BUILDING NODE "v$NODE_VERSION" IN "$DIR"
 
-# For now, use our fork with https://github.com/npm/npm/pull/5821
-git clone --branch "v${NODE_VERSION}-with-npm-5821" --depth 1 \
-    https://github.com/meteor/node.git
+# Use official node source
+git clone https://github.com/nodejs/node.git
 cd node
+git checkout "tags/v$NODE_VERSION"
+
 rm -rf .git
 ./configure --prefix="$DIR"
-make -j4
+make -j9 #Using 9 b/c 4(*2 hyperthread) + 1 extra
 make install PORTABLE=1
 # PORTABLE=1 is a node hack to make npm look relative to itself instead
 # of hard coding the PREFIX.
