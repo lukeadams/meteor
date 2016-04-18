@@ -552,20 +552,20 @@ var forkJoin = function (options, iterable, fn) {
     options = {};
   }
 
-  options.forkJoin = true;
+  //options.forkJoin = false;
 
   const enterJobAsync = Promise.denodeify(enterJob);
   const parallel = (options.parallel !== undefined) ? options.parallel : true;
 
-  return enterJobAsync(options).then(() => {
+  return enterJob(options,() => {
     const errors = [];
     let results = _.map(iterable, (...args) => {
-      const promise = enterJobAsync({
+      const promise = enterJob({
         title: (options.title || "") + " child"
-      }).then(() => fn(...args))
+      }, () => fn(...args))
         // Collect any errors thrown (and later re-throw the first one),
         // but don't stop processing remaining jobs.
-        .catch(error => (errors.push(error), null));
+        //.catch(error => (errors.push(error), null)); //<-- this still needs to exist. Maybe in try{}catch
 
       if (parallel) {
         // If the jobs are intended to run in parallel, return each
@@ -576,13 +576,13 @@ var forkJoin = function (options, iterable, fn) {
 
       // By awaiting the promise during each iteration, we effectively
       // serialize the execution of the jobs.
-      return promise.await();
+      return(Promise.await(promise))
     });
 
     if (parallel) {
       // If the jobs ran in parallel, then results is an array of Promise
       // objects that still need to be resolved.
-      results = Promise.all(results).await();
+      results = Promise.awaitAll(results);
     }
 
     if (errors.length > 0) {
@@ -594,7 +594,7 @@ var forkJoin = function (options, iterable, fn) {
     }
 
     return results;
-  }).await();
+  })
 };
 
 
