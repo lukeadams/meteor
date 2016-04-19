@@ -128,7 +128,9 @@ var ensureIsopacketsLoadable = function () {
   // Look at each isopacket. Check to see if it's on disk and up to date. If
   // not, build it. We rebuild them in the order listed in ISOPACKETS.
   var messages = Console.withProgressDisplayVisible(function () {
-    return buildmessage.capture(function () {
+    return buildmessage.capture({ 
+      title: "Refreshing isopackets" },
+      function () {
       _.each(ISOPACKETS, function (packages, isopacketName) {
         if (failedPackageBuild) {
           return;
