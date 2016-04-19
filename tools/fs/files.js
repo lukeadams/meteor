@@ -272,7 +272,7 @@ files.statOrNull = function (path) {
 // Like rm -r.
 files.rm_recursive = Profile("files.rm_recursive", function (p) {
   if (Fiber.current && Fiber.yield && ! Fiber.yield.disallowed) {
-    Promise.denodeify(rimraf)(files.convertToOSPath(p)).await();
+    Promise.await(Promise.denodeify(rimraf)(files.convertToOSPath(p)));
   } else {
     rimraf.sync(files.convertToOSPath(p));
   }
