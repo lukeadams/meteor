@@ -1713,10 +1713,11 @@ main.registerCommand({
     });
 
     var releaseConstrainedPkgSet = {}; // pinned core packages (to skip)
-    _.each(releaseRecordForConstraints.packages, function (v, packageName) {
-      releaseConstrainedPkgSet[packageName] = true;
-    });
-
+    if (releaseRecordForConstraints){
+      _.each(releaseRecordForConstraints.packages, function (v, packageName) {
+        releaseConstrainedPkgSet[packageName] = true;
+      });
+    }
     var nonlatestDirectDeps = [];
     var nonlatestIndirectDeps = [];
     projectContext.packageMap.eachPackage(function (name, info) {
