@@ -5,8 +5,8 @@ Package.describe({
 });
 
 Npm.depends({
-  "faye-websocket": "0.9.4",
-  "permessage-deflate": "0.1.3"
+  "faye-websocket": "0.11.0",
+  "permessage-deflate": "0.1.5"
 });
 
 Package.onUse(function (api) {
