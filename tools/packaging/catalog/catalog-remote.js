@@ -264,8 +264,9 @@ _.extend(Db.prototype, {
       Console.debug("Creating database directory", dbFile);
 
       var folder = files.pathDirname(dbFile);
-      if ( !files.mkdir_p(folder) )
+      if ( !files.mkdir_p(folder) ) {
         throw new Error("Could not create folder at " + folder);
+      }
     }
 
     Console.debug("Opening db file", dbFile);
@@ -545,8 +546,9 @@ _.extend(RemoteCatalog.prototype, {
     var self = this;
     var match = this._columnsQuery(
       "SELECT version FROM versions WHERE packageName=?", name);
-    if (match === null)
+    if (match === null){
       return [];
+    }
     var pvParse = _.memoize(VersionParser.parse);
     return _.pluck(match, 'version').sort(function (a, b) {
       return VersionParser.compare(pvParse(a), pvParse(b));
@@ -559,8 +561,9 @@ _.extend(RemoteCatalog.prototype, {
     var self = this;
     var versionRecords = this._contentQuery(
       "SELECT content FROM versions WHERE packageName=?", [name]);
-    if (! versionRecords)
+    if (! versionRecords){
       return [];
+    }
 
     var pvParse = _.memoize(VersionParser.parse);
     versionRecords.sort(function (a, b) {
@@ -577,16 +580,18 @@ _.extend(RemoteCatalog.prototype, {
     var latest = _.find(versions, function (version) {
       return !/-/.test(version);
     });
-    if (!latest)
+    if (!latest) {
       return null;
+    }
     return self.getVersion(name, latest);
   },
 
   getPackage: function (name, options) {
     var result = this._contentQuery(
       "SELECT content FROM packages WHERE name=?", name);
-    if (!result || result.length === 0)
+    if (!result || result.length === 0) {
       return null;
+    }
     if (result.length !== 1) {
       throw new Error("Found multiple packages matching name: " + name);
     }
@@ -599,8 +604,9 @@ _.extend(RemoteCatalog.prototype, {
         "(SELECT _id FROM versions WHERE versions.packageName=? AND " +
         "versions.version=?)",
       [name, version]);
-    if (!result || result.length === 0)
+    if (!result || result.length === 0){
       return null;
+    }
     return result;
   },
 
@@ -638,8 +644,9 @@ _.extend(RemoteCatalog.prototype, {
     var self = this;
     var result = self._contentQuery(
       "SELECT content FROM releaseTracks WHERE name=?", name);
-    if (!result || result.length === 0)
+    if (!result || result.length === 0) {
       return null;
+    }
     return result[0];
   },
 
@@ -648,8 +655,9 @@ _.extend(RemoteCatalog.prototype, {
     var result = self._contentQuery(
       "SELECT content FROM releaseVersions WHERE track=? AND version=?",
       [track, version]);
-    if (!result || result.length === 0)
+    if (!result || result.length === 0) {
       return null;
+    }
     return result[0];
   },
 
@@ -749,8 +757,9 @@ _.extend(RemoteCatalog.prototype, {
       throw e;
     }
 
-    if (self.offline)
+    if (self.offline){
       return false;
+    }
 
     if (options.maxAge) {
       var lastSync = self.getMetadata(METADATA_LAST_SYNC);
@@ -797,8 +806,9 @@ _.extend(RemoteCatalog.prototype, {
       "SELECT content FROM releaseVersions WHERE track=?", track);
 
     var recommended = _.filter(result, function (v) {
-      if (!v.recommended)
+      if (!v.recommended){
         return false;
+      }
       return !laterThanOrderKey || v.orderKey > laterThanOrderKey;
     });
 
@@ -831,8 +841,9 @@ _.extend(RemoteCatalog.prototype, {
   getDefaultReleaseVersion: function (track) {
     var self = this;
     var versionRecord = self.getDefaultReleaseVersionRecord(track);
-    if (! versionRecord)
+    if (! versionRecord){
       throw new Error("Can't get default release version for track " + track);
+    }
     return _.pick(versionRecord, ["track", "version" ]);
   },
 
@@ -841,12 +852,14 @@ _.extend(RemoteCatalog.prototype, {
   getDefaultReleaseVersionRecord: function (track) {
     var self = this;
 
-    if (!track)
+    if (!track) {
       track = exports.DEFAULT_TRACK;
+    }
 
     var versions = self.getSortedRecommendedReleaseRecords(track);
-    if (!versions.length)
+    if (!versions.length) {
       return null;
+    }
     return  versions[0];
   },
 
