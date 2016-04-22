@@ -6,8 +6,13 @@
 
 var packageJson = {
   name: "meteor-dev-bundle",
-  // Version is not important but is needed to prevent warnings.
+
+  // These are not important but are needed to prevent warnings.
   version: "0.0.0",
+  description: "",
+  repository: "",
+  license: "",
+
   dependencies: {
     "fibers": "1.0.10",
     "meteor-promise": "0.6.3",
